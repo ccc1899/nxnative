@@ -1,0 +1,45 @@
+name: Build nxnative IPA
+
+on:
+  workflow_dispatch:
+    inputs:
+      game_url:
+        description: 'Direct download URL for game NSP'
+        required: true
+        default: ''
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Environment
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app
+          brew install xcodegen zstd glslang
+          brew install --cask dotnet-sdk
+          python3 -m pip install lz4 "capstone>=5,<6" fonttools nsz zbic
+
+      - name: Restore prod.keys
+        run: |
+          mkdir -p ~/.keys
+          echo "${{ secrets.PROD_KEYS }}" > ~/.keys/prod.keys
+
+      - name: Download Game File
+        run: |
+          mkdir -p ~/Games
+          curl -L "${{ github.event.inputs.game_url }}" -o ~/Games/game.nsp
+
+      - name: Build IPA
+        run: |
+          python3 scripts/build_ipa_from_nsp.py ~/Games -k ~/.keys/prod.keys
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nxnative-mario-ipa
+          path: |
+            */*.ipa
+            *.ipa
