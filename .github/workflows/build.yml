@@ -10,14 +10,14 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-14
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Environment
         run: |
-          sudo xcode-select -s /Applications/Xcode.app
+          sudo xcode-select -s /Applications/Xcode_15.4.app
           brew install xcodegen zstd glslang
           brew install --cask dotnet-sdk
           python3 -m pip install --break-system-packages lz4 "capstone>=5,<6" fonttools nsz zbic
