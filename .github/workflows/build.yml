@@ -20,7 +20,8 @@ jobs:
           sudo xcode-select -s /Applications/Xcode.app
           brew install xcodegen zstd glslang
           brew install --cask dotnet-sdk
-          python3 -m pip install lz4 "capstone>=5,<6" fonttools nsz zbic
+          python3 -m pip install --break-system-packages lz4 "capstone>=5,<6" fonttools nsz zbic
+
 
       - name: Restore prod.keys
         run: |
